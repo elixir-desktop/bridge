@@ -1,21 +1,12 @@
 # Bridge
 
-**TODO: Add description**
+The `Bridge` is part of the elixir-desktop project and bridges all `wxWidgets` calls that an Elixir application is making to 
+a connected tcp-connection. This allows externalizing platform UI on Android and iOS to the native widgets instead of porting `wxWidgets` there. 
 
-## Installation
+# Usage
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `bridge` to your list of dependencies in `mix.exs`:
+The `Bridge` will be pulled in automatically by mobile builds of the `elixir-desktop` project. It uses a system environment variable `BRIDGE_PORT` to know on which TCP-port the bridge server is listening. 
 
-```elixir
-def deps do
-  [
-    {:bridge, "~> 0.1.0"}
-  ]
-end
-```
+To understand how this is working in practice, check the Android example app that implements a bridge server.
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/bridge](https://hexdocs.pm/bridge).
-
+__Work in progress__
