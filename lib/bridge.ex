@@ -145,7 +145,7 @@ defmodule Bridge do
   def handle_call({:register_fun, fun}, _from, state = %Bridge{funs: funs}) do
     ref = System.unique_integer([:positive])
     funs = Map.put(funs, ref, fun)
-    {:ok, ref, %Bridge{state | funs: funs}}
+    {:reply, ref, %Bridge{state | funs: funs}}
   end
 
   @impl true
