@@ -7,7 +7,7 @@ defmodule Bridge do
   framework to make apps mobile!
   """
   use GenServer
-  defstruct port: nil, socket: nil, send: nil, requests: %{}
+  defstruct port: nil, socket: nil, send: nil, requests: %{}, funs: %{}
 
   def new([]) do
     # GenServer.start(__MODULE__)
@@ -77,6 +77,9 @@ defmodule Bridge do
       pid when is_pid(pid) ->
         pre_encode!(%{_type: :pid, value: List.to_string(:erlang.pid_to_list(pid))})
 
+      fun when is_function(fun) ->
+        pre_encode!(%{_type: :fun, value: GenServer.call(__MODULE__, {:register_fun, fun})})
+
       list when is_list(list) ->
         Enum.map(list, &pre_encode!/1)
 
@@ -137,6 +140,12 @@ defmodule Bridge do
     else
       {:reply, ":ok", state}
     end
+  end
+
+  def handle_call({:register_fun, fun}, _from, state = %Bridge{funs: funs}) do
+    ref = System.unique_integer([:positive])
+    funs = Map.put(funs, ref, fun)
+    {:ok, ref, %Bridge{state | funs: funs}}
   end
 
   @impl true
