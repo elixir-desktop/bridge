@@ -139,7 +139,14 @@ Bridge.generate_bridge_calls(:wxDialog, [
 Bridge.generate_bridge_calls(:wx_misc, [:launchDefaultBrowser, :getOsDescription])
 Bridge.generate_bridge_calls(:wxImage, [:getAlpha, :getData, :replace, :setAlpha, :setData])
 
-Bridge.generate_bridge_calls(:wxStaticText, [:show, :setLabel, :getLabel, :setForegroundColour, :hide])
+Bridge.generate_bridge_calls(:wxStaticText, [
+  :show,
+  :setLabel,
+  :getLabel,
+  :setForegroundColour,
+  :hide
+])
+
 Bridge.generate_bridge_calls(:wxTextCtrl, [:setValue, :getValue, :enable])
 Bridge.generate_bridge_calls(:wxStdDialogButtonSizer, [:realize, :addButton])
 Bridge.generate_bridge_calls(:wxCloseEvent, [:canVeto, :veto])

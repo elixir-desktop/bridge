@@ -21,8 +21,6 @@ defmodule Bridge do
       if port == 0 do
         {Bridge.Mock, &Bridge.Mock.send/2}
       else
-        IO.inspect({"localhost", port, packet: 4, active: true})
-
         {:ok, socket} =
           :gen_tcp.connect({127, 0, 0, 1}, port, packet: 4, active: true, mode: :binary)
 
@@ -176,8 +174,12 @@ defmodule Bridge do
           def #{name}(arg1, arg2, arg3), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3])
           def #{name}(arg1, arg2, arg3, arg4), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4])
           def #{name}(arg1, arg2, arg3, arg4, arg5), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4, arg5])
-          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4, arg5, arg6])
-          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6, arg7), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4, arg5, arg6, arg7])
+          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6), do: Bridge.bridge_call(:#{module}, :#{
+          name
+        }, [arg1, arg2, arg3, arg4, arg5, arg6])
+          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6, arg7), do: Bridge.bridge_call(:#{module}, :#{
+          name
+        }, [arg1, arg2, arg3, arg4, arg5, arg6, arg7])
         """
       end
 
