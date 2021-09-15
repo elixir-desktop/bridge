@@ -18,6 +18,12 @@ defmodule Bridge.Mock do
         [:wxMenuBar, :getMenuCount | _] ->
           0
 
+        [:wxImage, :getAlpha | _] ->
+          <<>>
+
+        [:wxImage, :getData | _] ->
+          <<>>
+
         [_module, method, _args] ->
           case Atom.to_string(method) do
             <<"is", _::binary>> -> true

@@ -165,7 +165,7 @@ defmodule Bridge do
   end
 
   defmacro generate_bridge_calls(module, names) do
-    names = names ++ [:new, :destroy, :connect]
+    names = names ++ [:new, :destroy, :connect, :getId]
 
     methods =
       for name <- names do
@@ -175,6 +175,9 @@ defmodule Bridge do
           def #{name}(arg1, arg2), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2])
           def #{name}(arg1, arg2, arg3), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3])
           def #{name}(arg1, arg2, arg3, arg4), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4])
+          def #{name}(arg1, arg2, arg3, arg4, arg5), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4, arg5])
+          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4, arg5, arg6])
+          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6, arg7), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4, arg5, arg6, arg7])
         """
       end
 
