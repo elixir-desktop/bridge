@@ -36,6 +36,9 @@ defmodule Bridge do
   end
 
   def bridge_call(:wx, :batch, [fun]), do: fun.()
+  def bridge_call(:wx, :set_env, _args), do: :ok
+  def bridge_call(:wx, :get_env, _args), do: :ok
+  def bridge_call(:wx, :getObjectType, [obj]), do: Keyword.get(obj, :type)
 
   def bridge_call(:wx, :new, _args) do
     case Process.whereis(__MODULE__) do
@@ -46,6 +49,18 @@ defmodule Bridge do
       pid ->
         pid
     end
+  end
+
+  def bridge_call(type, :new, args) do
+    [type: type, args: args]
+  end
+
+  def bridge_call(module, :connect = method, args) do
+    IO.puts("bridge_cast: #{module}.#{method}(#{inspect(args)})")
+    ref = System.unique_integer([:positive])
+    json = encode!([module, method, args])
+
+    GenServer.cast(__MODULE__, {:bridge_call, ref, json})
   end
 
   def bridge_call(module, method, args) do
@@ -126,6 +141,14 @@ defmodule Bridge do
   defp decode_map(other), do: other
 
   @impl true
+  def handle_cast({:bridge_call, ref, json}, state) do
+    case handle_call({:bridge_call, ref, json}, nil, state) do
+      {:reply, _ret, state} -> {:noreply, state}
+      {:noreply, state} -> {:noreply, state}
+    end
+  end
+
+  @impl true
   def handle_call(
         {:bridge_call, ref, json},
         from,
@@ -157,7 +180,7 @@ defmodule Bridge do
       Bridge.Mock.send(Bridge.Mock, message)
       {:noreply, state}
     else
-      GenServer.reply(from, json)
+      if from, do: GenServer.reply(from, json)
       {:noreply, %Bridge{state | requests: Map.delete(reqs, ref)}}
     end
   end
