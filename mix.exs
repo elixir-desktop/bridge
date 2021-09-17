@@ -1,10 +1,18 @@
 defmodule Bridge.MixProject do
   use Mix.Project
 
+  @version "1.0.0"
+  @url "https://github.com/elixir-desktop/bridge"
   def project do
     [
       app: :wx,
-      version: "0.1.0",
+      version: @version,
+      source_url: @url,
+      description: """
+      wxWidgets drop-in replacement API to make the /desktop package
+      work on Android and iOS
+      """,
+      package: package(),
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -22,7 +30,18 @@ defmodule Bridge.MixProject do
   defp deps do
     [
       {:jason, "~> 1.2"},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp package do
+    [
+      name: :bridge,
+      maintainers: ["Dominic Letz"],
+      licenses: ["MIT"],
+      links: %{github: @url},
+      files: ~w(lib LICENSE.md mix.exs README.md)
     ]
   end
 end
