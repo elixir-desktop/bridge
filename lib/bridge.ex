@@ -55,7 +55,7 @@ defmodule Bridge do
     [type: type, args: args]
   end
 
-  def bridge_call(module, :connect = method, args) do
+  def bridge_call(module, method = :connect, args) do
     IO.puts("bridge_cast: #{module}.#{method}(#{inspect(args)})")
     ref = System.unique_integer([:positive])
     json = encode!([module, method, args])
