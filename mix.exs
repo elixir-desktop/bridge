@@ -1,7 +1,7 @@
 defmodule Bridge.MixProject do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "1.0.1"
   @url "https://github.com/elixir-desktop/bridge"
   def project do
     [
@@ -41,7 +41,7 @@ defmodule Bridge.MixProject do
       maintainers: ["Dominic Letz"],
       licenses: ["MIT"],
       links: %{github: @url},
-      files: ~w(lib LICENSE.md mix.exs README.md)
+      files: ~w(include lib LICENSE.md mix.exs README.md)
     ]
   end
 end
