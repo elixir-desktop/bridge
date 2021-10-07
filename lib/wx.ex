@@ -16,7 +16,8 @@ Bridge.generate_bridge_calls(:wxWebView, [
   :enableContextMenu,
   :isContextMenuEnabled,
   :isShownOnScreen,
-  :loadURL
+  :loadURL,
+  :reload
 ])
 
 Bridge.generate_bridge_calls(:wxHtmlWindow, [:setPage])
