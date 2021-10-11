@@ -1,6 +1,7 @@
 -record(wx, {id, obj, userData, event}).
 -record(wxCommand, {type, cmdString, commandInt, extraLong}).
 -record(wxClose, {type}).
+-record(wxMenu, {type, menuId, menu}).
 
 -define(wxDEFAULT_FRAME_STYLE, 2).
 -define(wxEXPAND, 4).
