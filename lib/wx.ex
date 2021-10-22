@@ -2,6 +2,7 @@ defmodule :wx do
   def batch(fun), do: fun.()
   def set_env(_wx_env), do: :ok
   def get_env(), do: :ok
+  # credo:disable-for-next-line
   def getObjectType(obj), do: Keyword.get(obj, :type)
 
   def new(_args \\ nil) do
