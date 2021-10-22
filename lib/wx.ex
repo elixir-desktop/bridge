@@ -1,3 +1,23 @@
+defmodule :wx do
+  def batch(fun), do: fun.()
+  def set_env(_wx_env), do: :ok
+  def get_env(), do: :ok
+  def getObjectType(obj), do: Keyword.get(obj, :type)
+
+  def new(_args \\ nil) do
+    case Process.whereis(Bridge) do
+      nil ->
+        {:ok, pid} = GenServer.start(Bridge, [], name: Bridge)
+        pid
+
+      pid ->
+        pid
+    end
+  end
+
+  def null(), do: :null
+end
+
 require Bridge
 Bridge.generate_bridge_calls(:wxLocale, [:getSystemLanguage, :getCanonicalName])
 Bridge.generate_bridge_calls(:wxMenuItem, [:getId, :check])
@@ -29,8 +49,6 @@ Bridge.generate_bridge_calls(:wxNotificationMessage, [
   :setMessage,
   :show
 ])
-
-Bridge.generate_bridge_calls(:wx, [:set_env, :get_env, :subscribe_events, :getObjectType, :batch])
 
 Bridge.generate_bridge_calls(:wxFrame, [
   :raise,
@@ -85,9 +103,9 @@ Bridge.generate_bridge_calls(:wxTopLevelWindow, [
   :setTitle
 ])
 
-Bridge.generate_bridge_calls(:wxIcon, [:copyFromBitmap])
-Bridge.generate_bridge_calls(:wxImage, [])
-Bridge.generate_bridge_calls(:wxBitmap, [])
+Bridge.generate_bridge_calls(:wxIcon, [:copyFromBitmap, :getHeight, :getWidth])
+Bridge.generate_bridge_calls(:wxImage, [:getHeight, :getWidth, :rescale])
+Bridge.generate_bridge_calls(:wxBitmap, [:convertToImage, :copyFromIcon, :getHeight, :getWidth])
 
 Bridge.generate_bridge_calls(:wxButton, [
   :show,
