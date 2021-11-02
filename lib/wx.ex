@@ -104,10 +104,6 @@ Bridge.generate_bridge_calls(:wxTopLevelWindow, [
   :setTitle
 ])
 
-Bridge.generate_bridge_calls(:wxIcon, [:copyFromBitmap, :getHeight, :getWidth])
-Bridge.generate_bridge_calls(:wxImage, [:getHeight, :getWidth, :rescale])
-Bridge.generate_bridge_calls(:wxBitmap, [:convertToImage, :copyFromIcon, :getHeight, :getWidth])
-
 Bridge.generate_bridge_calls(:wxButton, [
   :show,
   :setLabel,
@@ -157,7 +153,6 @@ Bridge.generate_bridge_calls(:wxDialog, [
 ])
 
 Bridge.generate_bridge_calls(:wx_misc, [:launchDefaultBrowser, :getOsDescription])
-Bridge.generate_bridge_calls(:wxImage, [:getAlpha, :getData, :replace, :setAlpha, :setData])
 
 Bridge.generate_bridge_calls(:wxStaticText, [
   :show,
