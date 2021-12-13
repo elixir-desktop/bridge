@@ -3,6 +3,7 @@ defmodule :wxImage do
     [type: __MODULE__, args: [width, height, data, alpha, options]]
   end
 
+  # credo:disable-for-next-line
   def isOk(_image), do: true
   def destroy(_image), do: :ok
   # credo:disable-for-next-line
