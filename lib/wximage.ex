@@ -3,12 +3,14 @@ defmodule :wxImage do
     [type: __MODULE__, args: [width, height, data, alpha, options]]
   end
 
+  def isOk(_image), do: true
   def destroy(_image), do: :ok
   # credo:disable-for-next-line
   def getHeight(_image), do: 1
   # credo:disable-for-next-line
   def getWidth(_image), do: 1
   def rescale(image, _width, _height, _options \\ nil), do: image
+  def resize(image, _size, _position, _options \\ nil), do: image
   # credo:disable-for-next-line
   def getAlpha(_image), do: <<>>
   # credo:disable-for-next-line

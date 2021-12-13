@@ -18,8 +18,6 @@ defmodule Bridge.Mock do
   def handle_method([:wxLocale | _]), do: 'en'
   def handle_method([type, :new | args]), do: [type: type, args: args]
   def handle_method([:wxMenuBar, :getMenuCount | _]), do: 0
-  def handle_method([:wxImage, :getAlpha | _]), do: <<>>
-  def handle_method([:wxImage, :getData | _]), do: <<>>
 
   def handle_method([_module, method | _]) do
     case Atom.to_string(method) do
