@@ -21,8 +21,16 @@ end
 
 require Bridge
 Bridge.generate_bridge_calls(:wxLocale, [:getSystemLanguage, :getCanonicalName])
-Bridge.generate_bridge_calls(:wxMenuItem, [:getId, :check])
-Bridge.generate_bridge_calls(:wxMenu, [:appendSeparator, :append, :enable])
+Bridge.generate_bridge_calls(:wxMenuItem, [:getId, :check, :setText])
+
+Bridge.generate_bridge_calls(:wxMenu, [
+  :appendSeparator,
+  :append,
+  :enable,
+  :delete,
+  :getMenuItems,
+  :setTitle
+])
 
 Bridge.generate_bridge_calls(:wxMenuBar, [
   :remove,
@@ -63,6 +71,7 @@ Bridge.generate_bridge_calls(:wxFrame, [
   :iconize,
   :isIconized,
   :setIcon,
+  :setMinSize,
   :setMenuBar,
   :hide,
   :setTitle
@@ -165,3 +174,4 @@ Bridge.generate_bridge_calls(:wxStaticText, [
 Bridge.generate_bridge_calls(:wxTextCtrl, [:setValue, :getValue, :enable])
 Bridge.generate_bridge_calls(:wxStdDialogButtonSizer, [:realize, :addButton])
 Bridge.generate_bridge_calls(:wxCloseEvent, [:canVeto, :veto])
+Bridge.generate_bridge_calls(:wxArtProvider, [:getIcon, :getBitmap])
