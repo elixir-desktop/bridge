@@ -7,7 +7,14 @@ defmodule Bridge do
   framework to make apps mobile!
   """
   use GenServer
-  defstruct port: nil, socket: nil, send: nil, requests: %{}, funs: %{}
+
+  defstruct port: nil,
+            socket: nil,
+            send: nil,
+            requests: %{},
+            funs: %{},
+            events: [],
+            subscribers: []
 
   def new([]) do
     # GenServer.start(__MODULE__)
@@ -150,6 +157,18 @@ defmodule Bridge do
 
   @impl true
   def handle_call(
+        {:subscribe_events, pid},
+        _from,
+        state = %Bridge{events: events, subscribers: subscribers}
+      ) do
+    for event <- events do
+      send(pid, event)
+    end
+
+    {:reply, :ok, %Bridge{state | events: [], subscribers: [pid | subscribers]}}
+  end
+
+  def handle_call(
         {:bridge_call, ref, json},
         from,
         state = %Bridge{socket: socket, requests: reqs, send: send}
@@ -170,6 +189,26 @@ defmodule Bridge do
   end
 
   @impl true
+  def handle_info(
+        {:tcp, _port, <<0::unsigned-size(64), json::binary>>},
+        state = %Bridge{subscribers: subscribers, events: events}
+      ) do
+    event = decode!(json)
+
+    if [] == subscribers do
+      IO.puts("no subscriber for event #{inspect(event)}")
+      {:noreply, %Bridge{state | events: events ++ [event]}}
+    else
+      IO.puts("sending event to subscribers #{inspect(event)}")
+
+      for sub <- subscribers do
+        send(sub, event)
+      end
+
+      {:noreply, state}
+    end
+  end
+
   def handle_info(
         {:tcp, _port, <<ref::unsigned-size(64), json::binary>>},
         state = %Bridge{requests: reqs}

@@ -16,6 +16,10 @@ defmodule :wx do
     end
   end
 
+  def subscribe_events() do
+    GenServer.call(Bridge, {:subscribe_events, self()})
+  end
+
   def null(), do: :null
 end
 
