@@ -1,5 +1,7 @@
 defmodule :wx_object do
   use GenServer
+  require Record
+  Record.defrecord(:wx, Record.extract(:wx, from: "include/wx.hrl"))
   defstruct frame: nil, state: nil, module: nil
 
   def start_link(name, module, args, _flags \\ []) do
@@ -20,6 +22,13 @@ defmodule :wx_object do
   end
 
   @impl true
+  def handle_info(wx() = event, s = %:wx_object{state: state, module: module}) do
+    case module.handle_event(event, state) do
+      {:noreply, new_state} -> {:noreply, %{s | state: new_state}}
+      other -> other
+    end
+  end
+
   def handle_info(message, s = %:wx_object{state: state, module: module}) do
     case module.handle_info(message, state) do
       {:noreply, new_state} -> {:noreply, %{s | state: new_state}}

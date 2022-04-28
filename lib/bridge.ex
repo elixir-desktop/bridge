@@ -5,6 +5,37 @@ defmodule Bridge do
   It's purpose is to make it possible to communicate with native
   parts of iOS/Android applications within the elixir-desktop
   framework to make apps mobile!
+
+  # Protocol
+
+  Current protocol is json based.
+
+  All :wx***.new(args...) calls generate keyword lists like:
+    `[id: System.unique_integer([:positive]), type: module, args: args]`
+
+  Most wx***.method(args...) calls are then forwarded via JSON to the native side with
+  a 64-bit request id value:
+    `<<request_ref :: unsigned-size(64), json :: binary>>`
+
+  The responses correspndingly return the same ref and the json response:
+    `<<response_ref :: unsigned-size(64), json :: binary>>`
+
+  For receiving commands from the native side of the bridge there are three special ref
+  values:
+    * ref = 0 -> This indicates a published system event system, corresponding to `:wx.subscribe_events()`
+      needed for publishing files that are shared to the app.
+      `<<0 :: unsigned-size(64), event :: binary>>`
+    * ref = 1 -> This indicates triggering a callback function call that was previously passed over.
+      Internally an `funs` that are passed into `:wx.method()` calls are converted to 64-bit references,
+      those can be used here to indicate which function to call.
+    `<<1 :: unsigned-size(64), fun :: unsigned-size(64), event :: binary>>`
+    * ref = 2 -> This indicates a call from the native side back into the app side. TBD
+    `<<2 :: unsigned-size(64), ...>>`
+
+    # JSON Encoding of Elixir Terms
+
+
+
   """
   use GenServer
 
@@ -59,20 +90,24 @@ defmodule Bridge do
   end
 
   def bridge_call(type, :new, args) do
-    [type: type, args: args]
+    [id: System.unique_integer([:positive]), type: type, args: args]
+  end
+
+  def bridge_call(_type, :getId, args) do
+    Keyword.get(args, :id)
   end
 
   def bridge_call(module, method = :connect, args) do
     IO.puts("bridge_cast: #{module}.#{method}(#{inspect(args)})")
-    ref = System.unique_integer([:positive])
-    json = encode!([module, method, args])
+    ref = System.unique_integer([:positive]) + 10
+    json = encode!([module, method, args ++ [self()]])
 
     GenServer.cast(__MODULE__, {:bridge_call, ref, json})
   end
 
   def bridge_call(module, method, args) do
     IO.puts("bridge_call: #{module}.#{method}(#{inspect(args)})")
-    ref = System.unique_integer([:positive])
+    ref = System.unique_integer([:positive]) + 10
     json = encode!([module, method, args])
 
     ret =
@@ -207,6 +242,36 @@ defmodule Bridge do
 
       {:noreply, state}
     end
+  end
+
+  def handle_info(
+        {:tcp, _port, <<1::unsigned-size(64), fun_ref::unsigned-size(64), json::binary>>},
+        state = %Bridge{funs: funs}
+      ) do
+    args = decode!(json)
+
+    case Map.get(funs, fun_ref) do
+      nil ->
+        IO.puts("no fun defined for fun_ref #{fun_ref} (#{inspect(args)})")
+
+      fun ->
+        IO.puts("executing callback fun_ref #{fun_ref} (#{inspect(args)})")
+        spawn(fn -> apply(fun, args) end)
+    end
+
+    {:noreply, state}
+  end
+
+  def handle_info(
+        {:tcp, _port, <<2::unsigned-size(64), json::binary>>},
+        state = %Bridge{}
+      ) do
+    json = decode!(json)
+    payload = json[:payload]
+    pid = json[:pid]
+    IO.puts("sending event #{inspect(payload)} to #{inspect(pid)}")
+    send(pid, payload)
+    {:noreply, state}
   end
 
   def handle_info(
