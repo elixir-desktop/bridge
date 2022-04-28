@@ -19,7 +19,4 @@ jobs:
         mix local.hex --force
         mix local.rebar --force
         mix deps.get
-        mix compile
-        mix format --check-formatted
-        mix credo
-        mix test
+        mix lint

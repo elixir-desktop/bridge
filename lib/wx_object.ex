@@ -22,7 +22,7 @@ defmodule :wx_object do
   end
 
   @impl true
-  def handle_info(wx() = event, s = %:wx_object{state: state, module: module}) do
+  def handle_info(event = wx(), s = %:wx_object{state: state, module: module}) do
     case module.handle_event(event, state) do
       {:noreply, new_state} -> {:noreply, %{s | state: new_state}}
       other -> other
