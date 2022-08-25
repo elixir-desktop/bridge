@@ -82,39 +82,40 @@ Bridge.generate_bridge_calls(:wxFrame, [
 ])
 
 Bridge.generate_bridge_calls(:wxWindow, [
-  :raise,
-  :getSizer,
-  :setSizer,
-  :clear,
-  :refresh,
   :centerOnScreen,
-  :show,
-  :isShown,
+  :clear,
+  :getSizer,
+  :hide,
   :iconize,
   :isIconized,
+  :isShown,
+  :raise,
+  :refresh,
   :setFocus,
   :setIcon,
   :setMenuBar,
-  :hide,
-  :setTitle
+  :setSizer,
+  :setTitle,
+  :show
 ])
 
 Bridge.generate_bridge_calls(:wxTopLevelWindow, [
-  :raise,
-  :getSizer,
-  :setSizer,
-  :clear,
-  :refresh,
   :centerOnScreen,
-  :show,
-  :isShown,
+  :clear,
+  :getSizer,
+  :hide,
   :iconize,
+  :isActive,
   :isIconized,
+  :isShown,
+  :raise,
+  :refresh,
   :setFocus,
   :setIcon,
   :setMenuBar,
-  :hide,
-  :setTitle
+  :setSizer,
+  :setTitle,
+  :show
 ])
 
 Bridge.generate_bridge_calls(:wxButton, [
