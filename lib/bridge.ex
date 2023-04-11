@@ -39,13 +39,16 @@ defmodule Bridge do
   """
   use GenServer
 
+  require Logger
+
   defstruct port: nil,
             socket: nil,
             send: nil,
             requests: %{},
             funs: %{},
             events: [],
-            subscribers: []
+            subscribers: [],
+            lastURL: nil
 
   def new([]) do
     # GenServer.start(__MODULE__)
@@ -78,6 +81,11 @@ defmodule Bridge do
   def bridge_call(:wx, :get_env, _args), do: :ok
   def bridge_call(:wx, :getObjectType, [obj]), do: Keyword.get(obj, :type)
 
+  def bridge_call(:wxWebView, :loadURL, [obj, uri]) do
+    GenServer.cast(__MODULE__, {:lastURL, uri})
+    do_bridge_call(:wxWebView, :loadURL, [obj, uri])
+  end
+
   def bridge_call(:wx, :new, _args) do
     case Process.whereis(__MODULE__) do
       nil ->
@@ -106,6 +114,10 @@ defmodule Bridge do
   end
 
   def bridge_call(module, method, args) do
+    do_bridge_call(module, method, args)
+  end
+
+  defp do_bridge_call(module, method, args) do
     IO.puts("bridge_call: #{module}.#{method}(#{inspect(args)})")
     ref = System.unique_integer([:positive]) + 10
     json = encode!([module, method, args])
@@ -188,6 +200,10 @@ defmodule Bridge do
       {:reply, _ret, state} -> {:noreply, state}
       {:noreply, state} -> {:noreply, state}
     end
+  end
+
+  def handle_cast({:lastURL, uri}, state) do
+    {:noreply, %Bridge{state | lastURL: uri}}
   end
 
   @impl true
@@ -286,6 +302,37 @@ defmodule Bridge do
     else
       if from, do: GenServer.reply(from, json)
       {:noreply, %Bridge{state | requests: Map.delete(reqs, ref)}}
+    end
+  end
+
+  def handle_info({:tcp_error, socket, reason}, state = %Bridge{socket: socket}) do
+    Logger.error("Bridge connection failed: #{inspect(reason)}")
+    {:noreply, try_reconnect(state)}
+  end
+
+  def handle_info({:tcp_closed, socket}, state = %Bridge{socket: socket}) do
+    Logger.error("Bridge connection closed")
+    {:noreply, try_reconnect(state)}
+  end
+
+  def handle_info(other, state) do
+    Logger.error("Bridge received unhandled info: #{inspect(other)}")
+    {:noreply, state}
+  end
+
+  defp try_reconnect(state = %Bridge{port: port, lastURL: lastURL}) do
+    Logger.error("try_reconnnect(#{port})")
+
+    case :gen_tcp.connect({127, 0, 0, 1}, port, [packet: 4, active: true, mode: :binary], 1_000) do
+      {:ok, socket} ->
+        Logger.error("Bridge reconnect succeeded!")
+        # spawn(fn -> bridge_call(:wxWebView, :loadURL, [nil, lastURL]) end)
+        %Bridge{state | socket: socket}
+
+      {:error, err} ->
+        Logger.error("Bridge reconnect failed: #{inspect(err)}")
+        Process.sleep(1_000)
+        try_reconnect(state)
     end
   end
 
