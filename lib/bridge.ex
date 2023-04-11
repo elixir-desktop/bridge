@@ -320,13 +320,13 @@ defmodule Bridge do
     {:noreply, state}
   end
 
-  defp try_reconnect(state = %Bridge{port: port, lastURL: _lastURL}) do
+  defp try_reconnect(state = %Bridge{port: port, lastURL: lastURL}) do
     Logger.error("try_reconnnect(#{port})")
 
     case :gen_tcp.connect({127, 0, 0, 1}, port, [packet: 4, active: true, mode: :binary], 1_000) do
       {:ok, socket} ->
         Logger.error("Bridge reconnect succeeded!")
-        # spawn(fn -> bridge_call(:wxWebView, :loadURL, [nil, lastURL]) end)
+        spawn(fn -> bridge_call(:wxWebView, :loadURL, [nil, lastURL]) end)
         %Bridge{state | socket: socket}
 
       {:error, err} ->
