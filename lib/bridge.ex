@@ -320,7 +320,7 @@ defmodule Bridge do
     {:noreply, state}
   end
 
-  defp try_reconnect(state = %Bridge{port: port, lastURL: lastURL}) do
+  defp try_reconnect(state = %Bridge{port: port, lastURL: _lastURL}) do
     Logger.error("try_reconnnect(#{port})")
 
     case :gen_tcp.connect({127, 0, 0, 1}, port, [packet: 4, active: true, mode: :binary], 1_000) do
