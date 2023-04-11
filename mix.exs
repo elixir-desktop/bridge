@@ -1,7 +1,7 @@
 defmodule Bridge.MixProject do
   use Mix.Project
 
-  @version "1.0.10"
+  @version "1.1.0"
   @url "https://github.com/elixir-desktop/bridge"
   def project do
     [
