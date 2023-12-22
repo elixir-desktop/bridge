@@ -6,6 +6,7 @@
 -define(wxDEFAULT_FRAME_STYLE, 2).
 -define(wxEXPAND, 4).
 -define(wxHORIZONTAL, 8).
+-define(wxVERTICAL, 8).
 -define(wxICON_ERROR, 16).
 -define(wxICON_INFORMATION, 32).
 -define(wxICON_QUESTION, 64).
