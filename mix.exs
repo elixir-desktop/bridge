@@ -13,7 +13,7 @@ defmodule Bridge.MixProject do
       work on Android and iOS
       """,
       package: package(),
-      elixir: "~> 1.11",
+      elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases()

@@ -9,4 +9,4 @@ The `Bridge` will be pulled in automatically by mobile builds of the `elixir-des
 
 To understand how this is working in practice, check the Android example app that implements a bridge server.
 
-__Work in progress__
+__Work in progress__ but used in production on Android and iOS for [Diode Collab](https://diode.io).
