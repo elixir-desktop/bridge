@@ -38,7 +38,6 @@ defmodule Bridge do
 
   """
   use GenServer
-
   require Logger
 
   defstruct port: nil,
@@ -285,8 +284,14 @@ defmodule Bridge do
     json = decode!(json)
     payload = json[:payload]
     pid = json[:pid]
-    IO.puts("sending event #{inspect(payload)} to #{inspect(pid)}")
-    send(pid, payload)
+    Logger.info("sending event #{inspect(payload)} to #{inspect(pid)}")
+
+    if is_pid(pid) do
+      send(pid, payload)
+    else
+      Logger.error("Event contains invalid pid: #{inspect(json)}")
+    end
+
     {:noreply, state}
   end
 
@@ -348,12 +353,8 @@ defmodule Bridge do
           def #{name}(arg1, arg2, arg3), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3])
           def #{name}(arg1, arg2, arg3, arg4), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4])
           def #{name}(arg1, arg2, arg3, arg4, arg5), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4, arg5])
-          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6), do: Bridge.bridge_call(:#{module}, :#{
-          name
-        }, [arg1, arg2, arg3, arg4, arg5, arg6])
-          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6, arg7), do: Bridge.bridge_call(:#{module}, :#{
-          name
-        }, [arg1, arg2, arg3, arg4, arg5, arg6, arg7])
+          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4, arg5, arg6])
+          def #{name}(arg1, arg2, arg3, arg4, arg5, arg6, arg7), do: Bridge.bridge_call(:#{module}, :#{name}, [arg1, arg2, arg3, arg4, arg5, arg6, arg7])
         """
       end
 

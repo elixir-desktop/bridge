@@ -15,7 +15,7 @@ defmodule Bridge.Mock do
   end
 
   def handle_method([:wx, :getObjectType, [arg]]), do: Keyword.get(arg, :type)
-  def handle_method([:wxLocale | _]), do: 'en'
+  def handle_method([:wxLocale | _]), do: ~c"en"
   def handle_method([type, :new | args]), do: [type: type, args: args]
   def handle_method([:wxMenuBar, :getMenuCount | _]), do: 0
 
